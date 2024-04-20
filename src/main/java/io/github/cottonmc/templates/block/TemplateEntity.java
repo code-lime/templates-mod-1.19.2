@@ -12,10 +12,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtHelper;
+import net.minecraft.network.Packet;
 import net.minecraft.network.listener.ClientPlayPacketListener;
-import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
-import net.minecraft.registry.Registries;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
@@ -54,7 +53,7 @@ public class TemplateEntity extends BlockEntity implements ThemeableBlockEntity 
 		BlockState lastRenderedState = renderedState;
 		
 		if(tag.contains("BlockState")) { //2.0.4 and earlier
-			renderedState = NbtHelper.toBlockState(Registries.BLOCK.getReadOnlyWrapper(), tag.getCompound("BlockState"));
+			renderedState = NbtHelper.toBlockState(tag.getCompound("BlockState"));
 			
 			if(tag.getBoolean("spentglow")) spentGlowstoneDust();
 			if(tag.getBoolean("spentredst")) spentRedstoneTorch();
@@ -62,7 +61,7 @@ public class TemplateEntity extends BlockEntity implements ThemeableBlockEntity 
 			setEmitsRedstone(tag.getBoolean("emitsredst"));
 			setSolidity(!tag.contains("solid") || tag.getBoolean("solid")); //default to "true" if it's nonexistent
 		} else {
-			renderedState = NbtHelper.toBlockState(Registries.BLOCK.getReadOnlyWrapper(), tag.getCompound(BLOCKSTATE_KEY));
+			renderedState = NbtHelper.toBlockState(tag.getCompound(BLOCKSTATE_KEY));
 			bitfield = tag.contains(BITFIELD_KEY) ? tag.getByte(BITFIELD_KEY) : DEFAULT_BITFIELD;
 		}
 		
@@ -92,7 +91,7 @@ public class TemplateEntity extends BlockEntity implements ThemeableBlockEntity 
 		
 		if(!(subElement instanceof NbtCompound subCompound)) return Blocks.AIR.getDefaultState();
 		
-		else return NbtHelper.toBlockState(Registries.BLOCK.getReadOnlyWrapper(), subCompound);
+		else return NbtHelper.toBlockState(subCompound);
 	}
 	
 	//Awkward: usually the BlockState is the source of truth for things like the "emits light" blockstate, but if you

@@ -25,6 +25,8 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.function.Supplier;
 
 public abstract class RetexturingBakedModel extends ForwardingBakedModel {
+	public static final int SPRITE_INDEX = QuadUvBounds.SPRITE_INDEX;
+
 	public RetexturingBakedModel(BakedModel baseModel, TemplateAppearanceManager tam, ModelBakeSettings settings, BlockState itemModelState, boolean ao) {
 		this.wrapped = baseModel; //field from the superclass; vanilla getQuads etc will delegate through to this
 		
@@ -142,7 +144,7 @@ public abstract class RetexturingBakedModel extends ForwardingBakedModel {
 			
 			//The quad tag numbers were selected so this magic trick works:
 			Direction dir = facePermutation.get(DIRECTIONS[quad.tag() - 1]);
-			quad.spriteBake(ta.getSprite(dir), MutableQuadView.BAKE_NORMALIZED | ta.getBakeFlags(dir) | (uvlock ? MutableQuadView.BAKE_LOCK_UV : 0));
+			quad.spriteBake(SPRITE_INDEX, ta.getSprite(dir), MutableQuadView.BAKE_NORMALIZED | ta.getBakeFlags(dir) | (uvlock ? MutableQuadView.BAKE_LOCK_UV : 0));
 			
 			return true;
 		}
@@ -163,7 +165,7 @@ public abstract class RetexturingBakedModel extends ForwardingBakedModel {
 			if(tag == 0) return true;
 			
 			Direction dir = facePermutation.get(DIRECTIONS[quad.tag() - 1]);
-			if(ta.hasColor(dir)) quad.color(tint, tint, tint, tint);
+			if(ta.hasColor(dir)) quad.spriteColor(SPRITE_INDEX, tint, tint, tint, tint);
 			
 			return true;
 		}

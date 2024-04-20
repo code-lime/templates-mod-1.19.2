@@ -1,8 +1,8 @@
 package io.github.cottonmc.templates.util;
 
+import net.minecraft.client.util.math.Vector3d;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
-import org.joml.Vector3d;
 
 public class StairShapeMaker {
 	//TODO: clean this the fuck up, maybe keep in mind that VoxelShapes can be rotated multiples of 90 degrees by just rotating their corners
@@ -10,11 +10,20 @@ public class StairShapeMaker {
 		Edge.CoordinateFrame frame = innerEdge.makeCoordinateFrame();
 		Vector3d origin = frame.origin();
 		
-		Vector3d in = new Vector3d(frame.a()).mul(stepIn);
-		Vector3d fstRise = new Vector3d(frame.b()).mul(initialStepRise);
+		Vector3d in = MathMigrate.vector3d(frame.a());
+		in.multiply(stepIn);
+		Vector3d fstRise = MathMigrate.vector3d(frame.b());
+		fstRise.multiply(initialStepRise);
 		
-		Vector3d cursor = new Vector3d(origin).add(frame.along()).add(in).add(fstRise);
-		Vector3d step = new Vector3d(frame.b()).mul(stepRise).add(new Vector3d(frame.a()).mul(-stepRun));
+		Vector3d cursor = MathMigrate.vector3d(origin);
+		cursor.add(frame.along());
+		cursor.add(in);
+		cursor.add(fstRise);
+
+		Vector3d step = MathMigrate.vector3d(frame.b());
+		step.multiply(stepRise);
+		step.add(frame.a());
+		step.multiply(-stepRun);
 		
 		VoxelShape shape = VoxelShapes.empty();
 		for(int i = 0; i < stepCount; i++) {

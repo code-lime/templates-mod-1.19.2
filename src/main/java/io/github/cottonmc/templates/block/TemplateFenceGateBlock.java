@@ -9,7 +9,6 @@ import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.FenceGateBlock;
 import net.minecraft.block.ShapeContext;
-import net.minecraft.block.WoodType;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -27,13 +26,9 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 public class TemplateFenceGateBlock extends FenceGateBlock implements BlockEntityProvider, TemplateInteractionUtilExt {
-	public TemplateFenceGateBlock(Settings settings, WoodType woodType) {
-		super(settings, woodType);
-		setDefaultState(TemplateInteractionUtil.setDefaultStates(getDefaultState()));
-	}
-	
 	public TemplateFenceGateBlock(Settings settings) {
-		this(settings, WoodType.OAK);
+		super(settings);
+		setDefaultState(TemplateInteractionUtil.setDefaultStates(getDefaultState()));
 	}
 	
 	@Nullable

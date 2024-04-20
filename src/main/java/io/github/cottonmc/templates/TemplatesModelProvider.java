@@ -9,8 +9,8 @@ import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.client.util.SpriteIdentifier;
 import net.minecraft.item.ItemConvertible;
-import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -86,6 +86,6 @@ public class TemplatesModelProvider implements ModelResourceProvider, ModelVaria
 	}
 	
 	public void assignItemModel(Identifier templateModelId, ItemConvertible... itemConvs) {
-		for(ItemConvertible itemConv : itemConvs) assignItemModel(templateModelId, Registries.ITEM.getId(itemConv.asItem()));
+		for(ItemConvertible itemConv : itemConvs) assignItemModel(templateModelId, Registry.ITEM.getId(itemConv.asItem()));
 	}
 }

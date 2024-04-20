@@ -5,6 +5,7 @@
 	"name": "Templates 2",
 	"description": "An API for templated blocks",
 	"authors": [
+		"Lime (code-lime)",
 		"quaternary",
 		"LemmaEOF",
 		"Grondag",
@@ -12,8 +13,8 @@
 	],
 	"contact": {
 		"homepage": "https://highlysuspect.agency/",
-		"sources": "https://github.com/quat1024/templates-mod",
-		"issues": "https://github.com/quat1024/templates-mod/issues"
+		"sources": "https://github.com/code-lime/templates-mod-1.19.2",
+		"issues": "https://github.com/code-lime/templates-mod-1.19.2/issues"
 	},
 	"license": "MIT",
 	"icon": "templates-icon.png",
@@ -30,7 +31,7 @@
 		"templates.mixins.json"
 	],
 	"depends": {
-		"minecraft": ">=1.20.1",
+		"minecraft": ">=1.19.2",
 		"fabricloader": "*",
 		"fabric-api": "*"
 	}

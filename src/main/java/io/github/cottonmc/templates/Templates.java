@@ -20,24 +20,21 @@ import io.github.cottonmc.templates.block.TemplateTrapdoorBlock;
 import io.github.cottonmc.templates.block.TemplateVerticalSlabBlock;
 import io.github.cottonmc.templates.block.TemplateWallBlock;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
+import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
+import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockSetType;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.GlazedTerracottaBlock;
+import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.ApiStatus;
@@ -54,7 +51,10 @@ public class Templates implements ModInitializer {
 	//addon devs: *Don't* add your blocks to this collection, it's just for my registration convenience since Templates adds a lot of blocks...
 	@ApiStatus.Internal static final ArrayList<Block> INTERNAL_TEMPLATES = new ArrayList<>();
 	@ApiStatus.Internal static Block CUBE, STAIRS, SLAB, VERTICAL_SLAB, POST, FENCE, FENCE_GATE, DOOR, TRAPDOOR, IRON_DOOR, IRON_TRAPDOOR, PRESSURE_PLATE, BUTTON, LEVER, WALL, CARPET, PANE, CANDLE, SLOPE, TINY_SLOPE, COOL_RIVULET;
-	
+	@ApiStatus.Internal static Item ITEM_COOL_RIVULET;
+	@ApiStatus.Internal static ItemGroup ITEM_GROUP;
+
+
 	//For addon devs: Please don't stuff more blocks into this BlockEntityType, and register your own.
 	//You can even re-register the same TemplateEntity class under your own ID if you like. (It's an extensible block entity.)
 	@ApiStatus.Internal public static BlockEntityType<TemplateEntity> TEMPLATE_BLOCK_ENTITY;
@@ -76,11 +76,11 @@ public class Templates implements ModInitializer {
 		POST           = registerTemplate("post"          , new TemplatePostBlock(cp(Blocks.OAK_FENCE)));
 		FENCE          = registerTemplate("fence"         , new TemplateFenceBlock(cp(Blocks.OAK_FENCE)));
 		FENCE_GATE     = registerTemplate("fence_gate"    , new TemplateFenceGateBlock(cp(Blocks.OAK_FENCE_GATE)));
-		DOOR           = registerTemplate("door"          , new TemplateDoorBlock(cp(Blocks.OAK_DOOR), BlockSetType.OAK));
-		TRAPDOOR       = registerTemplate("trapdoor"      , new TemplateTrapdoorBlock(cp(Blocks.OAK_TRAPDOOR), BlockSetType.OAK));
-		IRON_DOOR      = registerTemplate("iron_door"     , new TemplateDoorBlock(cp(Blocks.IRON_DOOR), BlockSetType.IRON));
-		IRON_TRAPDOOR  = registerTemplate("iron_trapdoor" , new TemplateTrapdoorBlock(cp(Blocks.IRON_TRAPDOOR), BlockSetType.IRON));
-		PRESSURE_PLATE = registerTemplate("pressure_plate", new TemplatePressurePlateBlock(cp(Blocks.OAK_PRESSURE_PLATE)));
+		DOOR           = registerTemplate("door"          , new TemplateDoorBlock(cp(Blocks.OAK_DOOR)));
+		TRAPDOOR       = registerTemplate("trapdoor"      , new TemplateTrapdoorBlock(cp(Blocks.OAK_TRAPDOOR)));
+		IRON_DOOR      = registerTemplate("iron_door"     , new TemplateDoorBlock(cp(Blocks.IRON_DOOR)));
+		IRON_TRAPDOOR  = registerTemplate("iron_trapdoor" , new TemplateTrapdoorBlock(cp(Blocks.IRON_TRAPDOOR)));
+		PRESSURE_PLATE = registerTemplate("pressure_plate", new TemplatePressurePlateBlock(PressurePlateBlock.ActivationRule.EVERYTHING, cp(Blocks.OAK_PRESSURE_PLATE)));
 		BUTTON         = registerTemplate("button"        , new TemplateButtonBlock(cp(Blocks.OAK_BUTTON)));
 		LEVER          = registerTemplate("lever"         , new TemplateLeverBlock(cp(Blocks.LEVER)));
 		WALL           = registerTemplate("wall"          , new TemplateWallBlock(TemplateInteractionUtil.makeSettings()));
@@ -91,30 +91,29 @@ public class Templates implements ModInitializer {
 		TINY_SLOPE     = registerTemplate("tiny_slope"    , new TemplateSlopeBlock.Tiny(TemplateInteractionUtil.makeSettings()));
 		
 		//The block entity is still called templates:slope; this is a bit of a legacy mistake.
-		TEMPLATE_BLOCK_ENTITY = Registry.register(Registries.BLOCK_ENTITY_TYPE, id("slope"),
+		TEMPLATE_BLOCK_ENTITY = Registry.register(Registry.BLOCK_ENTITY_TYPE, id("slope"),
 			FabricBlockEntityTypeBuilder.create((pos, state) -> new TemplateEntity(TEMPLATE_BLOCK_ENTITY, pos, state), INTERNAL_TEMPLATES.toArray(new Block[0])).build(null)
 		);
-		
+
+		ITEM_GROUP = FabricItemGroupBuilder.create(id("tab"))
+				.icon(() -> new ItemStack(SLOPE))
+				.appendItems((e, ctx) -> {
+					e.addAll(INTERNAL_TEMPLATES.stream().map(ItemStack::new).toList());
+					e.add(new ItemStack(ITEM_COOL_RIVULET));
+				})
+				.build();
+
 		//hey guys rate my registration code
-		Registry.register(Registries.ITEM, id("cool_rivulet"), new BlockItem(
-			COOL_RIVULET = Registry.register(Registries.BLOCK, id("cool_rivulet"), new GlazedTerracottaBlock(
-				AbstractBlock.Settings.create().hardness(0.2f)) {
+		Registry.register(Registry.ITEM, id("cool_rivulet"), ITEM_COOL_RIVULET = new BlockItem(
+			COOL_RIVULET = Registry.register(Registry.BLOCK, id("cool_rivulet"), new GlazedTerracottaBlock(
+				AbstractBlock.Settings.of(Material.DECORATION).hardness(0.2f)) {
 				@Override
 				public void appendTooltip(ItemStack stack, @Nullable BlockView world, List<Text> tooltip, TooltipContext eggbals) {
 					tooltip.add(Text.translatable("block.templates.cool_rivulet").formatted(Formatting.GRAY));
 				}
 			}),
-			new Item.Settings()
+			new FabricItemSettings().group(ITEM_GROUP)
 		));
-		
-		Registry.register(Registries.ITEM_GROUP, id("tab"), FabricItemGroup.builder()
-			.displayName(Text.translatable("itemGroup.templates.tab"))
-			.icon(() -> new ItemStack(SLOPE))
-			.entries((ctx, e) -> {
-				e.addAll(INTERNAL_TEMPLATES.stream().map(ItemStack::new).collect(Collectors.toList()));
-				e.add(COOL_RIVULET);
-			}).build()
-		);
 	}
 	
 	//purely to shorten this call :p
@@ -125,8 +124,8 @@ public class Templates implements ModInitializer {
 	private static <B extends Block> B registerTemplate(String path, B block) {
 		Identifier id = id(path);
 		
-		Registry.register(Registries.BLOCK, id, block);
-		Registry.register(Registries.ITEM, id, new BlockItem(block, new Item.Settings()));
+		Registry.register(Registry.BLOCK, id, block);
+		Registry.register(Registry.ITEM, id, new BlockItem(block, new Item.Settings()));
 		INTERNAL_TEMPLATES.add(block);
 		return block;
 	}

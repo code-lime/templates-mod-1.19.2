@@ -40,7 +40,7 @@ public class WaterloggableTemplateBlock extends TemplateBlock implements Waterlo
 	}
 	
 	public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState otherState, WorldAccess world, BlockPos pos, BlockPos moved) {
-		if(state.get(Properties.WATERLOGGED)) world.scheduleFluidTick(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
+		if(state.get(Properties.WATERLOGGED)) world.createAndScheduleFluidTick(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
 		return super.getStateForNeighborUpdate(state, direction, otherState, world, pos, moved);
 	}
 }

@@ -7,9 +7,9 @@ import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 import net.minecraft.client.render.model.ModelBakeSettings;
 import net.minecraft.util.math.Direction;
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
-import org.joml.Vector4f;
+import net.minecraft.util.math.Matrix4f;
+import net.minecraft.util.math.Vec3f;
+import net.minecraft.util.math.Vector4f;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -20,7 +20,7 @@ public class MeshTransformUtil {
 		QuadEmitter emitter = builder.getEmitter();
 		
 		mesh.forEach(quad -> {
-			emitter.copyFrom(quad);
+			quad.copyTo(emitter);
 			if(transform.transform(emitter)) emitter.emit();
 		});
 		
@@ -55,7 +55,7 @@ public class MeshTransformUtil {
 	
 	public static RenderContext.QuadTransform applyMatrix(Matrix4f mat) {
 		Map<Direction, Direction> facePermutation = facePermutation(mat);
-		Vector3f pos3 = new Vector3f();
+		Vec3f pos3 = new Vec3f();
 		Vector4f pos4 = new Vector4f();
 		
 		return quad -> {
@@ -64,15 +64,16 @@ public class MeshTransformUtil {
 				//Copy pos into a vec3, then a vec4. the w component is set to 0 since this is a point, not a normal
 				quad.copyPos(i, pos3);
 				pos3.add(-0.5f, -0.5f, -0.5f);
-				pos4.set(pos3, 0);
+				pos4.set(pos3.getX(), pos3.getY(), pos3.getZ(), 0);
 				
 				//Compute the matrix-vector product. This function mutates the vec4 in-place.
 				//Note that `transformAffine` has the same purpose as `transform`; the difference is it
 				//assumes (without checking) that the last row of the matrix is 0,0,0,1, as an optimization
-				mat.transform(pos4);
+				pos4.transform(mat);
+				//mat.transform(pos4);
 				
 				//Manually copy the data back onto the vertex
-				quad.pos(i, pos4.x + 0.5f, pos4.y + 0.5f, pos4.z + 0.5f);
+				quad.pos(i, pos4.getX() + 0.5f, pos4.getY() + 0.5f, pos4.getZ() + 0.5f);
 			}
 			
 			//permute tags

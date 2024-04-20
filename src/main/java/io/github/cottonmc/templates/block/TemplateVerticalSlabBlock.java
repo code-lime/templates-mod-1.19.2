@@ -65,7 +65,7 @@ public class TemplateVerticalSlabBlock extends TemplateSlabBlock {
 			if(ctx.getPlayer() != null && ctx.getPlayer().isSneaky() && ctx.getSide().getAxis().isHorizontal()) {
 				state = directionToState(state, ctx.getSide().getOpposite());
 			} else {
-				state = directionToState(state, ctx.getHorizontalPlayerFacing());
+				state = directionToState(state, ctx.getPlayerFacing());
 			}
 		}
 		

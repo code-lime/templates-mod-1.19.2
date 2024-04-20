@@ -1,5 +1,6 @@
 package io.github.cottonmc.templates.model;
 
+import com.mojang.datafixers.util.Pair;
 import io.github.cottonmc.templates.Templates;
 import io.github.cottonmc.templates.api.TemplatesClientApi;
 import net.fabricmc.fabric.api.renderer.v1.Renderer;
@@ -8,11 +9,7 @@ import net.fabricmc.fabric.api.renderer.v1.mesh.Mesh;
 import net.fabricmc.fabric.api.renderer.v1.mesh.MeshBuilder;
 import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
 import net.minecraft.block.BlockState;
-import net.minecraft.client.render.model.BakedModel;
-import net.minecraft.client.render.model.BakedQuad;
-import net.minecraft.client.render.model.Baker;
-import net.minecraft.client.render.model.ModelBakeSettings;
-import net.minecraft.client.render.model.UnbakedModel;
+import net.minecraft.client.render.model.*;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.SpriteIdentifier;
 import net.minecraft.screen.PlayerScreenHandler;
@@ -24,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Function;
@@ -57,15 +55,15 @@ public class UnbakedJsonRetexturedModel implements UnbakedModel, TemplatesClient
 	public Collection<Identifier> getModelDependencies() {
 		return Collections.singletonList(parent);
 	}
-	
+
 	@Override
-	public void setParents(Function<Identifier, UnbakedModel> function) {
-		function.apply(parent).setParents(function);
+	public Collection<SpriteIdentifier> getTextureDependencies(Function<Identifier, UnbakedModel> function, Set<Pair<String, String>> set) {
+		return function.apply(parent).getTextureDependencies(function, set);
 	}
-	
+
 	@Nullable
 	@Override
-	public BakedModel bake(Baker baker, Function<SpriteIdentifier, Sprite> spriteLookup, ModelBakeSettings modelBakeSettings, Identifier identifier) {
+	public BakedModel bake(ModelLoader baker, Function<SpriteIdentifier, Sprite> spriteLookup, ModelBakeSettings modelBakeSettings, Identifier identifier) {
 		Direction[] DIRECTIONS = RetexturingBakedModel.DIRECTIONS;
 		
 		Sprite[] specialSprites = new Sprite[DIRECTIONS.length];

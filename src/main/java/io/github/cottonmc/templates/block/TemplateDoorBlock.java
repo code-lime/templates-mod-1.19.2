@@ -5,7 +5,6 @@ import io.github.cottonmc.templates.Templates;
 import io.github.cottonmc.templates.api.TemplateInteractionUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEntityProvider;
-import net.minecraft.block.BlockSetType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.DoorBlock;
 import net.minecraft.block.ShapeContext;
@@ -26,8 +25,8 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 public class TemplateDoorBlock extends DoorBlock implements BlockEntityProvider {
-	public TemplateDoorBlock(Settings settings, BlockSetType blockSetType) {
-		super(settings, blockSetType);
+	public TemplateDoorBlock(Settings settings) {
+		super(settings);
 		setDefaultState(TemplateInteractionUtil.setDefaultStates(getDefaultState()));
 	}
 	

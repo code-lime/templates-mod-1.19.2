@@ -1,9 +1,9 @@
 package io.github.cottonmc.templates.util;
 
+import net.minecraft.client.util.math.Vector3d;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.util.StringIdentifiable;
 import net.minecraft.util.math.Direction;
-import org.joml.Vector3d;
 
 import java.util.Locale;
 
@@ -22,7 +22,7 @@ public enum Edge implements StringIdentifiable {
 	DOWN_EAST;
 	
 	public static Edge stairslikePlacement(ItemPlacementContext ctx) {
-		Direction playerHorizontalFacing = ctx.getHorizontalPlayerFacing();
+		Direction playerHorizontalFacing = ctx.getPlayerFacing();
 		Direction clickedFace = ctx.getSide();
 		boolean sneaky = ctx.getPlayer() != null && ctx.getPlayer().isSneaky();
 		
@@ -58,7 +58,7 @@ public enum Edge implements StringIdentifiable {
 	//I may have skill issue
 	//Beep boop i am very maintainable yes
 	public record CoordinateFrame(Vector3d origin, Vector3d along, Vector3d a, Vector3d b) {}
-	private static final Vector3d ZR = new Vector3d();
+	private static final Vector3d ZR = new Vector3d(0, 0, 0);
 	private static final Vector3d PX = new Vector3d(1, 0, 0);
 	private static final Vector3d NX = new Vector3d(-1, 0, 0);
 	private static final Vector3d PY = new Vector3d(0, 1, 0);

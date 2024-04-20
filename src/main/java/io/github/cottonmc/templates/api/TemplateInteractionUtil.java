@@ -1,12 +1,7 @@
 package io.github.cottonmc.templates.api;
 
 import io.github.cottonmc.templates.block.TemplateEntity;
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockEntityProvider;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.ShapeContext;
+import net.minecraft.block.*;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
@@ -52,7 +47,7 @@ public class TemplateInteractionUtil {
 	
 	//And if you don't have a Block.Settings to copy off of.
 	public static AbstractBlock.Settings makeSettings() {
-		return configureSettings(AbstractBlock.Settings.create());
+		return configureSettings(AbstractBlock.Settings.of(Material.DECORATION));
 	}
 	
 	public static BlockState setDefaultStates(BlockState in) {

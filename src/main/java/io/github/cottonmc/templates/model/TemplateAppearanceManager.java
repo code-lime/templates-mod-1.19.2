@@ -33,13 +33,15 @@ import java.util.function.Function;
 
 //TODO: extract an API for the api package
 public class TemplateAppearanceManager {
+	public static final int SPRITE_INDEX = QuadUvBounds.SPRITE_INDEX;
+
 	public TemplateAppearanceManager(Function<SpriteIdentifier, Sprite> spriteLookup) {
 		MaterialFinder finder = TemplatesClientApi.getInstance().getFabricRenderer().materialFinder();
 		for(BlendMode blend : BlendMode.values()) {
-			finder.clear().disableDiffuse(false).blendMode(blend);
+			finder.clear().disableDiffuse(SPRITE_INDEX, false).blendMode(SPRITE_INDEX, blend);
 			
-			materialsWithoutAo.put(blend, finder.ambientOcclusion(TriState.FALSE).find());
-			materialsWithAo.put(blend, finder.ambientOcclusion(TriState.DEFAULT).find()); //not "true" since that *forces* AO, i just want to *allow* AO
+			materialsWithoutAo.put(blend, finder.disableAo(SPRITE_INDEX, false).find());
+			materialsWithAo.put(blend, finder.find()); //not "true" since that *forces* AO, i just want to *allow* AO
 		}
 		
 		Sprite defaultSprite = spriteLookup.apply(DEFAULT_SPRITE_ID);
@@ -139,10 +141,10 @@ public class TemplateAppearanceManager {
 			float spriteVAvg = (sprite.getMinV() + sprite.getMaxV()) / 2;
 			
 			bakeFlags[dir.ordinal()] = MAGIC_BAKEFLAGS_SBOX[
-				(emitterAsParser.u(0) < spriteUAvg ? 8 : 0) |
-				(emitterAsParser.v(0) < spriteVAvg ? 4 : 0) |
-				(emitterAsParser.u(1) < spriteUAvg ? 2 : 0) |
-				(emitterAsParser.v(1) < spriteVAvg ? 1 : 0)
+				(emitterAsParser.spriteU(0, SPRITE_INDEX) < spriteUAvg ? 8 : 0) |
+				(emitterAsParser.spriteV(0, SPRITE_INDEX) < spriteVAvg ? 4 : 0) |
+				(emitterAsParser.spriteU(1, SPRITE_INDEX) < spriteUAvg ? 2 : 0) |
+				(emitterAsParser.spriteV(1, SPRITE_INDEX) < spriteVAvg ? 1 : 0)
 			];
 		}
 		

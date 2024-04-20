@@ -5,7 +5,6 @@ import io.github.cottonmc.templates.Templates;
 import io.github.cottonmc.templates.api.TemplateInteractionUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEntityProvider;
-import net.minecraft.block.BlockSetType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.PressurePlateBlock;
 import net.minecraft.block.ShapeContext;
@@ -26,15 +25,11 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 public class TemplatePressurePlateBlock extends PressurePlateBlock implements BlockEntityProvider {
-	public TemplatePressurePlateBlock(ActivationRule activationRule, Settings settings, BlockSetType blockSetType) {
-		super(activationRule, settings, blockSetType);
+	public TemplatePressurePlateBlock(ActivationRule activationRule, Settings settings) {
+		super(activationRule, settings);
 		setDefaultState(TemplateInteractionUtil.setDefaultStates(getDefaultState()));
 	}
-	
-	public TemplatePressurePlateBlock(Settings settings) {
-		this(ActivationRule.EVERYTHING, settings, BlockSetType.OAK);
-	}
-	
+
 	@Override
 	public @Nullable BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
 		return Templates.TEMPLATE_BLOCK_ENTITY.instantiate(pos, state);

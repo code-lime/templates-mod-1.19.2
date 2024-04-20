@@ -3,12 +3,7 @@ package io.github.cottonmc.templates.block;
 import com.google.common.base.MoreObjects;
 import io.github.cottonmc.templates.Templates;
 import io.github.cottonmc.templates.api.TemplateInteractionUtil;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockEntityProvider;
-import net.minecraft.block.BlockSetType;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.ButtonBlock;
-import net.minecraft.block.ShapeContext;
+import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -25,13 +20,9 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public class TemplateButtonBlock extends ButtonBlock implements BlockEntityProvider {
+public class TemplateButtonBlock extends WoodenButtonBlock implements BlockEntityProvider {
 	public TemplateButtonBlock(Settings settings) {
-		this(settings, BlockSetType.OAK, 30, true);
-	}
-	
-	public TemplateButtonBlock(Settings settings, BlockSetType blockSetType, int i, boolean bl) {
-		super(settings, blockSetType, i, bl);
+		super(settings);
 		setDefaultState(TemplateInteractionUtil.setDefaultStates(getDefaultState()));
 	}
 	
@@ -58,7 +49,7 @@ public class TemplateButtonBlock extends ButtonBlock implements BlockEntityProvi
 		if(!r.isAccepted()) r = super.onUse(state, world, pos, player, hand, hit);
 		return r;
 	}
-	
+
 	@Override
 	public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
 		TemplateInteractionUtil.onStateReplaced(state, world, pos, newState, moved);

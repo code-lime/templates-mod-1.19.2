@@ -6,7 +6,6 @@ import io.github.cottonmc.templates.api.TemplateInteractionUtil;
 import io.github.cottonmc.templates.api.TemplateInteractionUtilExt;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEntityProvider;
-import net.minecraft.block.BlockSetType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.block.TrapdoorBlock;
@@ -27,15 +26,11 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 public class TemplateTrapdoorBlock extends TrapdoorBlock implements BlockEntityProvider, TemplateInteractionUtilExt {
-	public TemplateTrapdoorBlock(Settings settings, BlockSetType blah) {
-		super(settings, blah);
+	public TemplateTrapdoorBlock(Settings settings) {
+		super(settings);
 		setDefaultState(TemplateInteractionUtil.setDefaultStates(getDefaultState()));
 	}
-	
-	public TemplateTrapdoorBlock(Settings settings) {
-		this(settings, BlockSetType.OAK);
-	}
-	
+
 	@Override
 	public @Nullable BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
 		return Templates.TEMPLATE_BLOCK_ENTITY.instantiate(pos, state);
