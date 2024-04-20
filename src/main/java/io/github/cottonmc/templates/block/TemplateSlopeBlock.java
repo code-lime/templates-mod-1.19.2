@@ -3,7 +3,6 @@ package io.github.cottonmc.templates.block;
 import com.google.common.base.MoreObjects;
 import io.github.cottonmc.templates.api.TemplateInteractionUtil;
 import io.github.cottonmc.templates.util.Edge;
-import io.github.cottonmc.templates.util.StairShapeMaker;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ShapeContext;
@@ -31,7 +30,7 @@ public class TemplateSlopeBlock extends WaterloggableTemplateBlock {
 	}
 	
 	protected VoxelShape getShape(Edge edge) {
-		return StairShapeMaker.makeStair(edge, 1, 0.125d, 0.125d, 0.125d, 8);
+		return edge.makeShape(false);
 	}
 	
 	@Override
@@ -69,7 +68,7 @@ public class TemplateSlopeBlock extends WaterloggableTemplateBlock {
 		
 		@Override
 		protected VoxelShape getShape(Edge edge) {
-			return StairShapeMaker.makeStair(edge, 0.5, 0.125d, 0.125d, 0.125d, 4);
+			return edge.makeShape(true);
 		}
 	}
 }

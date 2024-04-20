@@ -4,8 +4,11 @@ import net.minecraft.client.util.math.Vector3d;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.util.StringIdentifiable;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.shape.VoxelShape;
+import net.minecraft.util.shape.VoxelShapes;
 
 import java.util.Locale;
+import java.util.stream.IntStream;
 
 public enum Edge implements StringIdentifiable {
 	DOWN_NORTH,
@@ -85,5 +88,79 @@ public enum Edge implements StringIdentifiable {
 	@Override
 	public String asString() {
 		return name().toLowerCase(Locale.ROOT);
+	}
+
+	// [DOWN]
+	// 			   SOUTH
+	//  EAST [0](1,1) [1](0,1) WEST
+	//       [2](1,0) [3](0,0)
+	// 			   NORTH
+	//
+	// [ UP ]
+	// 			   SOUTH
+	//  EAST [4](1,1) [5](0,1) WEST
+	//       [6](1,0) [7](0,0)
+	// 		       NORTH
+	//
+
+	private int[] getParts(boolean tiny) {
+		if (tiny) {
+			return switch(this) {
+				case DOWN_NORTH -> new int[] { 2,3 };
+				case DOWN_SOUTH -> new int[] { 0,1 };
+				case UP_SOUTH -> new int[]   { 4,5 };
+				case UP_NORTH -> new int[]   { 6,7 };
+				case NORTH_WEST -> new int[] { 3,7 };
+				case SOUTH_WEST -> new int[] { 1,5 };
+				case SOUTH_EAST -> new int[] { 0,4 };
+				case NORTH_EAST -> new int[] { 2,6 };
+				case DOWN_WEST -> new int[]  { 1,3 };
+				case UP_WEST -> new int[]    { 5,7 };
+				case UP_EAST -> new int[]    { 4,6 };
+				case DOWN_EAST -> new int[]  { 0,2 };
+			};
+		} else {
+			return switch(this) {
+				case DOWN_NORTH -> new int[] { 0,1,2,3 , 6,7 };
+				case DOWN_SOUTH -> new int[] { 0,1,2,3 , 4,5 };
+				case UP_SOUTH -> new int[]   { 0,1 , 4,5,6,7 };
+				case UP_NORTH -> new int[]   { 2,3 , 4,5,6,7 };
+				case NORTH_WEST -> new int[] { 2,3,6,7 , 5,1 };
+				case SOUTH_WEST -> new int[] { 0,1,4,5 , 3,7 };
+				case SOUTH_EAST -> new int[] { 0,1,4,5 , 2,6 };
+				case NORTH_EAST -> new int[] { 2,3,6,7 , 4,0 };
+				case DOWN_WEST -> new int[]  { 0,1,2,3,  5,7 };
+				case UP_WEST -> new int[]    { 1,3 , 4,5,6,7 };
+				case UP_EAST -> new int[]    { 0,2 , 4,5,6,7 };
+				case DOWN_EAST -> new int[]  { 0,1,2,3 , 4,6 };
+			};
+		}
+	}
+	private static VoxelShape getPartShape(int index) {
+		int direction = index % 4;
+		boolean up = index >= 4;
+
+		float x = switch (direction) {
+			case 0, 2 -> 1;
+			case 1, 3 -> 0;
+			default -> throw new IllegalStateException("Unexpected value: " + direction);
+		};
+		float y = up ? 1 : 0;
+		float z = switch (direction) {
+			case 0, 1 -> 1;
+			case 2, 3 -> 0;
+			default -> throw new IllegalStateException("Unexpected value: " + direction);
+		};
+
+		x *= 0.5;
+		y *= 0.5;
+		z *= 0.5;
+
+		return VoxelShapes.cuboid(x, y, z, x + 0.5, y + 0.5, z + 0.5);
+	}
+	public VoxelShape makeShape(boolean tiny) {
+		return IntStream.of(getParts(tiny))
+				.mapToObj(Edge::getPartShape)
+				.reduce(VoxelShapes.empty(), VoxelShapes::union);
 	}
 }
